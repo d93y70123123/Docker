@@ -28,16 +28,22 @@ systemctl enable docker
 [Image]  
 create|run  
 build  
+* 使用build前，必須先移動到該dockerfile下
 search  
 pull  
 rmi  
+* 刪除映像檔前，必須把容器先殺光
 push  
 
 [Container]  
 run  
-start  
+start
+stop  
 exec  
+rm  
 commit  
+log  
+inspect
 * 若要離開通常都會想到exit，但容器必須要敲打鍵盤的[ctrl]+[p] & [ctrl]+[q]，才能離開
 
 
