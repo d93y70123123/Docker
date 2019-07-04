@@ -26,13 +26,36 @@ systemctl enable docker
 
 ## 常用指令，這邊我想分成針對Image還有Container的
 [Image]  
-create|run  
+create：建立容器但不啟動  
+```
+建立
+# docker create -it --name centos7-1 centos
+234999445b69ef107f4ffcf8f10bac9de1070d1a2f0a722b0051d92230381cd4
+
+列出正在執行的容器，這邊要注意的是STATUS是Created，是剛建立而不是啟動中喔!!!
+# docker ps -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS                  PORTS               NAMES
+234999445b69        centos              "/bin/bash"         3 seconds ago       Created                                     centos7-1
+```
+
+run：可以直接建立且執行容器，通常這個比較常用  
+```
+使用run之後會直接進入容器喔!!若要幫容器開port就必須要在建立的時候就增加。
+# docker run -it -p 80:8080 --name centos7-2 centos
+[root@7c5ca9df4fd1 /]#
+
+# docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS                  NAMES
+7c5ca9df4fd1        centos              "/bin/bash"         About a minute ago   Up About a minute   0.0.0.0:80->8080/tcp   centos7-2
+234999445b69        centos              "/bin/bash"         26 minutes ago       Up 26 minutes                              centos7-1
+```
+
 build  
 * 使用build前，必須先移動到該dockerfile下
 search  
 pull  
 rmi  
-* 刪除映像檔前，必須把容器先殺光
+* 刪除映像檔前，必須把容器先殺光 
 push  
 
 [Container]  
