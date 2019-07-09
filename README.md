@@ -83,10 +83,7 @@ run：可以直接建立且執行容器，通常這個比較常用
 CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS                  NAMES
 7c5ca9df4fd1        centos              "/bin/bash"         About a minute ago   Up About a minute   0.0.0.0:80->8080/tcp   centos7-2
 234999445b69        centos              "/bin/bash"         26 minutes ago       Up 26 minutes                              centos7-1
-```
-
-build  
-* 使用build前，必須先移動到該dockerfile下  
+```  
 
 rmi  
 * 刪除映像檔前，必須把容器先殺光  
