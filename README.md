@@ -84,6 +84,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 7c5ca9df4fd1        centos              "/bin/bash"         About a minute ago   Up About a minute   0.0.0.0:80->8080/tcp   centos7-2
 234999445b69        centos              "/bin/bash"         26 minutes ago       Up 26 minutes                              centos7-1
 ```  
+*-p <從外部連的port>:<容器開的port>  
 
 rmi  
 * 刪除映像檔前，必須把容器先殺光  
@@ -94,7 +95,33 @@ Untagged: centos@sha256:b5e66c4651870a1ad435cd75922fe2cb943c9e973a9673822d141482
 Deleted: sha256:9f38484d220fa527b1fb19747638497179500a1bed8bf0498eb788229229e6e1
 Deleted: sha256:d69483a6face4499acb974449d1303591fcbb5cdce5420f36f8a6607bda11854
 ```
-push  
+build  
+透過Dockerfile建立image的指令
+*要build前要先進入放置Dockerfile的目錄，若懶得移動可以加上 [-f]  
+*一次build只能有一個參數!!  
+```
+# docker build -t docker-centos2 .      *-t 是幫映像檔取名的意思
+Sending build context to Docker daemon  2.048kB
+Step 1/6 : FROM centos
+ ---> 9f38484d220f
+Step 2/6 : MAINTAINER tetetetetetest
+ ---> Using cache
+ ---> 80890a93ef3f
+Step 3/6 : RUN echo "tetetest" >> /test.txt
+ ---> Using cache
+ ---> bdac06b65dcd
+Step 4/6 : RUN yum -y install httpd
+ ---> Using cache
+ ---> 43a03096b2a9
+Step 5/6 : RUN echo "test" >> /var/www/html/index.html
+ ---> Using cache
+ ---> 4be696c7088f
+Step 6/6 : CMD ["/usr/sbin/apachectl","-DFOREGROUND"]
+ ---> Using cache
+ ---> 4336903b62b8
+Successfully built 4336903b62b8
+Successfully tagged docker-centos2:latest
+```
 
 ## [Container]  
 start：啟動容器 
@@ -185,11 +212,40 @@ inspect：查看容器的結構資訊
 ....
 
 ```
-* 若要離開通常都會想到exit，但容器必須要敲打鍵盤的[ctrl]+[p] & [ctrl]+[q]，才能離開
+* 通常用run建立並執行容器，用exit離開的話會將容器停止，要避免這個狀況的話 [ctrl + p] & [ctrl + q]  
 
+## Dockerfile
+dockerfile是類似利用腳本的方式，建立自己的image
+基本四個建立的階段：  
+1. 使用哪一種作業系統  
+  抓最底層的作業系統，畢竟還是要有作業系統才能操作嘛!!
+2. 作者資訊  
+  就只是告訴大家是誰做的，留下一些資訊!!
+3. 映像檔裏頭需要什麼東西
+  以下面的範例來說，我要裝的是apache，所以我就必須要下載httpd，然後修改預設的網頁，測試看看有沒有成功安裝並修改。
+  * 這邊需要注意的是，使用RUN就會增加一層資料層，所以可以用 && 把指令接下去做，如果指令太長可以用 \ 換行。
+4. 開啟容器時要執行的指令  
+  這邊就很像是  'docker run -it centos' 預設會是 /bin/bash 一樣。  
+  也很像 'docker exec -it 7c452 bash' 使用bash，所以才能用cenots的bash去操作環境。
 
+```
+# 基本映像檔，必須是第一個指令
+FROM centos
 
+# 維護者： docker_user@test.email
+MAINTAINER kai
+
+# 更新映像檔的指令
+RUN echo "test" >> /test.txt \
+&& yum -y install httpd \
+&& echo "test" >> /var/www/html/index.html
+
+# 建立新容器時要執行的指令
+CMD ["/usr/sbin/apachectl","-DFOREGROUND"]
+```
+                                                                                                                                                                                                             
 先把覺得有用的網址記錄下來  
 * Docker-toturial：https://github.com/twtrubiks/docker-tutorial  
 * Docker-基本教學：https://ithelp.ithome.com.tw/articles/10199339?sc=rss.qu  
 * Run & exec：https://www.jinnsblog.com/2018/10/docker-container-command.html  
+
