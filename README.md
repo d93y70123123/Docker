@@ -218,12 +218,15 @@ inspect：查看容器的結構資訊
 dockerfile是類似利用腳本的方式，建立自己的image
 基本四個建立的階段：  
 1. 使用哪一種作業系統  
-  抓最底層的作業系統，畢竟還是要有作業系統才能操作嘛!!
+  抓最底層的作業系統，畢竟還是要有作業系統才能操作嘛!!  
+  
 2. 作者資訊  
-  就只是告訴大家是誰做的，留下一些資訊!!
+  就只是告訴大家是誰做的，留下一些資訊!!  
+  
 3. 映像檔裏頭需要什麼東西
   以下面的範例來說，我要裝的是apache，所以我就必須要下載httpd，然後修改預設的網頁，測試看看有沒有成功安裝並修改。
-  * 這邊需要注意的是，使用RUN就會增加一層資料層，所以可以用 && 把指令接下去做，如果指令太長可以用 \ 換行。
+  * 這邊需要注意的是，使用RUN就會增加一層資料層，所以可以用 && 把指令接下去做，如果指令太長可以用 \ 換行。  
+  
 4. 開啟容器時要執行的指令  
   這邊就很像是  'docker run -it centos' 預設會是 /bin/bash 一樣。  
   也很像 'docker exec -it 7c452 bash' 使用bash，所以才能用cenots的bash去操作環境。
@@ -243,9 +246,37 @@ RUN echo "test" >> /test.txt \
 # 建立新容器時要執行的指令
 CMD ["/usr/sbin/apachectl","-DFOREGROUND"]
 ```
+
+## docker Volume
+放置檔案在容器外的功能，有兩種方式建立Volume：
+1.  `docker -it -v /root/kai:/kai centos`  -v 後的很像掛載的參數 [要掛載的東西] : [掛載到容器內的哪裡]
+
+2. Dockerfile中指定Volume
+可以自動生成，但不能指定在本機上的目錄。
+```
+FROM centos
+VOLUME ["/storage"]
+```
+
+3. 也可以先建立Volume，然後再將Volume加進容器
+```
+1.建立volume
+# docker volume create test-kai
+test-kai
+
+2.檢查有沒有建立成功
+# docker volume ls
+DRIVER              VOLUME NAME
+local               test-kai
+
+3.把volume加進容器
+# docker run -itd --name kai4 -v test-kai:/kai centos-0710
+57fe2b5e08ebf339411afbdf1155eba873f5c442aa6a8ec80872945f9ecd6e84
+```
                                                                                                                                                                                                              
 先把覺得有用的網址記錄下來  
 * Docker-toturial：https://github.com/twtrubiks/docker-tutorial  
 * Docker-基本教學：https://ithelp.ithome.com.tw/articles/10199339?sc=rss.qu  
 * Run & exec：https://www.jinnsblog.com/2018/10/docker-container-command.html  
 
+2019/07/10 編輯到volume，還有network、compose、Registry等等需要學習!!
